@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,31 +8,55 @@ namespace Bricks
 {
     public class BuildingElement : MonoBehaviour
     {
-        private Vector3 _dragOffset;
-        private Camera _cam;
+        public Action <BuildingElement> OnDrop { get; set; }
 
-        [SerializeField] private float _speed = 10;
+        [SerializeField]
+        private float _speed = 10;
 
-        void Awake()
-        {
-            _cam = Camera.main;
-        }
-
-        private void OnMouseDown()
-        {
-            
-        }
+        private bool _isDraged;
+        private bool _isOverOtherElement;
 
         private void OnMouseDrag()
         {
-            transform.position = Vector3.MoveTowards(transform.position, GetMousePos() + _dragOffset, _speed * Time.deltaTime);
+            _isDraged = true;
+            transform.position = Vector3.MoveTowards(transform.position, Extentions.GetMousePos() , _speed * Time.deltaTime);
+            Debug.Log(_isOverOtherElement);
         }
 
-        Vector3 GetMousePos()
+        private void OnMouseUp()
         {
-            var mousePos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-            return mousePos;
+            if (_isDraged && _isOverOtherElement)
+            {
+                if (OnDrop != null)
+                {
+                    OnDrop.Invoke(this);
+                }
+            }
+            _isDraged = false;
+
         }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (_isDraged && collision.TryGetComponent<BuildingElement>(out _) )
+            {
+                _isOverOtherElement = true;
+            }
+        }
+
+        private void OnTriggerStay2D(Collider2D collision)
+        {
+            if (_isDraged && collision.TryGetComponent<BuildingElement>(out _))
+            {
+                _isOverOtherElement = true;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            _isOverOtherElement = false;
+
+        }
+
     }
 }
