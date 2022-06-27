@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Bricks
@@ -21,35 +22,25 @@ namespace Bricks
 
         public void Execute (float detaTime)
         {
-            if (Input.GetMouseButtonUp(0) && !IsPointOnElement(out _))
+            if (Input.GetMouseButtonUp(0) && IsPlacementAllowed(Extentions.GetMousePos()))
             {
                 CreateElement(Extentions.GetMousePos());
             }
             else if (Input.GetMouseButtonUp(1) && IsPointOnElement(out var element))
             {
-                Debug.Log(element.name);
                 RemoveElement(element);
             }
-        }
-
-        public void PlaceElement (BuildingElement element)
-        {
-            List <BuildingElement> elements = new List<BuildingElement>(_elements.SortByDistance<BuildingElement>(element.transform.position));
-
-            
         }
 
         private void CreateElement(Vector3 position)
         {
             var element = Object.Instantiate<BuildingElement>(_prototype, position, Quaternion.identity);
-            element.OnDrop += PlaceElement;
             _elements.Add(element);
         }
 
         private void RemoveElement(BuildingElement element)
         {
             _elements.Remove(element);
-            element.OnDrop -= PlaceElement;
             Object.Destroy(element.gameObject);
         }
 
@@ -67,6 +58,23 @@ namespace Bricks
                 element = null;
                 return false;
             }
+        }
+
+        public bool IsPlacementAllowed (Vector3 position)
+        {
+            var size = _prototype.SpriteRenderer.bounds.max - _prototype.SpriteRenderer.bounds.min;
+            var verticalLimit = size.y;
+            var horisontalLimit = size.x;
+
+            foreach (var element in _elements)
+            {
+                var temp = position - element.transform.position;
+                if (Mathf.Abs(temp.x) < horisontalLimit && Mathf.Abs(temp.y) < verticalLimit)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

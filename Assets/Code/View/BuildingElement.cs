@@ -8,55 +8,30 @@ namespace Bricks
 {
     public class BuildingElement : MonoBehaviour
     {
-        public Action <BuildingElement> OnDrop { get; set; }
+        [SerializeField]
+        private SpriteRenderer _spriteRenderer;
+        public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
         [SerializeField]
-        private float _speed = 10;
-
-        private bool _isDraged;
-        private bool _isOverOtherElement;
+        private Rigidbody2D _rigidbody2D;
 
         private void OnMouseDrag()
         {
-            _isDraged = true;
-            transform.position = Vector3.MoveTowards(transform.position, Extentions.GetMousePos() , _speed * Time.deltaTime);
-            Debug.Log(_isOverOtherElement);
+            _rigidbody2D.MovePosition(Extentions.GetMousePos());
+        }
+
+        private void OnMouseDown()
+        {
+            Debug.Log("Unfreeze");
+            _rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
         private void OnMouseUp()
         {
-            if (_isDraged && _isOverOtherElement)
-            {
-                if (OnDrop != null)
-                {
-                    OnDrop.Invoke(this);
-                }
-            }
-            _isDraged = false;
-
+            Debug.Log("freeze");
+            _rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (_isDraged && collision.TryGetComponent<BuildingElement>(out _) )
-            {
-                _isOverOtherElement = true;
-            }
-        }
-
-        private void OnTriggerStay2D(Collider2D collision)
-        {
-            if (_isDraged && collision.TryGetComponent<BuildingElement>(out _))
-            {
-                _isOverOtherElement = true;
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            _isOverOtherElement = false;
-
-        }
 
     }
 }
