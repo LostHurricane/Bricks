@@ -8,13 +8,15 @@ namespace Bricks
     public class ElementController
     {
         private BuildingElement _prototype;
+        private MouseClicker _mouseClicker;
 
         private HashSet<BuildingElement> _elements;
         
 
-        public ElementController (BuildingElement prefab)
+        public ElementController (BuildingElement prefab, MouseClicker mouseClicker)
         {
             _prototype = prefab;
+            _mouseClicker = mouseClicker;
             _elements = new HashSet<BuildingElement>();
         }
 
@@ -22,19 +24,21 @@ namespace Bricks
 
         public void Execute (float detaTime)
         {
-            if (Input.GetMouseButtonUp(0) && IsPlacementAllowed(Extentions.GetMousePos()))
-            {
-                CreateElement(Extentions.GetMousePos());
-            }
-            else if (Input.GetMouseButtonUp(1) && IsPointOnElement(out var element))
+            if (_mouseClicker.DoubleClick && IsPointOnElement(out var element))
             {
                 RemoveElement(element);
             }
+            else if (_mouseClicker.LeftClick && IsPlacementAllowed(Extentions.GetMousePos()))
+            {
+                CreateElement(Extentions.GetMousePos());
+            }
+            
         }
 
         private void CreateElement(Vector3 position)
         {
-            var element = Object.Instantiate<BuildingElement>(_prototype, position, Quaternion.identity);
+            var element = Object.Instantiate(_prototype, position, Quaternion.identity);
+            element.SpriteRenderer.color = Random.ColorHSV();
             _elements.Add(element);
         }
 
@@ -49,7 +53,6 @@ namespace Bricks
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             if (hit && hit.collider.TryGetComponent<BuildingElement>(out var component))
             {
-                //Debug.Log("Target name: " + hit.collider.name);
                 element = component;
                 return true;
             }

@@ -10,15 +10,18 @@ namespace Bricks
         private BuildingElement _prototype;
 
         private ElementController _elementController;
+        private MouseClicker _mouseClicker;
 
         void Start()
         {
-            _elementController = new ElementController(_prototype);
+            _mouseClicker = new MouseClicker();
+            _elementController = new ElementController(_prototype, _mouseClicker);
         
         }
 
         void Update()
         {
+            _mouseClicker.Check();
             _elementController.Execute(Time.deltaTime);
         }
     }
