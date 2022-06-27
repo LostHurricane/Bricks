@@ -10,7 +10,7 @@ namespace Bricks
         private List<Pair> _connectedObjects;
         private MouseClicker _mouseClicker;
 
-        private BuildingElement _lastElemeent; // last element we clicked while 
+        private BuildingElement _lastElement; // first element we clicked
 
         public LinesController(MouseClicker mouseClicker)
         {
@@ -34,19 +34,19 @@ namespace Bricks
             {
                 if (Extentions.IsPointOnElement(out var element))
                 {
-                    if (!_lastElemeent)
+                    if (!_lastElement)
                     {
-                        _lastElemeent = element;
+                        _lastElement = element;
                     }
                     else
                     {
-                        _connectedObjects.Add(new Pair { elementOne = _lastElemeent.transform, elementTwo = element.transform, lineRenderer = LaneRendererBuild() });
-                        _lastElemeent = null;
+                        _connectedObjects.Add(new Pair { elementOne = _lastElement.transform, elementTwo = element.transform, lineRenderer = LaneRendererBuild() });
+                        _lastElement = null;
                     }
                 }
                 else
                 {
-                    _lastElemeent = null;
+                    _lastElement = null;
                 }
             }
         }
