@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Bricks
@@ -32,7 +30,6 @@ namespace Bricks
             {
                 CreateElement(Extentions.GetMousePos());
             }
-            
         }
 
         private void CreateElement(Vector3 position)
@@ -46,21 +43,6 @@ namespace Bricks
         {
             _elements.Remove(element);
             Object.Destroy(element.gameObject);
-        }
-
-        public bool IsPointOnElement (out BuildingElement element)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit && hit.collider.TryGetComponent<BuildingElement>(out var component))
-            {
-                element = component;
-                return true;
-            }
-            else
-            {
-                element = null;
-                return false;
-            }
         }
 
         public bool IsPlacementAllowed (Vector3 position)

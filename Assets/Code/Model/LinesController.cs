@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 namespace Bricks
 {
@@ -12,7 +10,7 @@ namespace Bricks
         private List<Pair> _connectedObjects;
         private MouseClicker _mouseClicker;
 
-        private BuildingElement _lastElemeent;
+        private BuildingElement _lastElemeent; // last element we clicked while 
 
         public LinesController(MouseClicker mouseClicker)
         {
@@ -25,7 +23,13 @@ namespace Bricks
         public void Execute()
         {
             StateCheck();
+            MouseCheck();
+            Draw();
 
+        }
+
+        private void MouseCheck()
+        {
             if (_mouseClicker.RightClick)
             {
                 if (Extentions.IsPointOnElement(out var element))
@@ -36,12 +40,8 @@ namespace Bricks
                     }
                     else
                     {
-                        var lr = new GameObject().AddComponent<LineRenderer>();
-                        lr.gameObject.transform.SetParent(_parent, false);
-                        _connectedObjects.Add(new Pair{elementOne = _lastElemeent, elementTwo = element, lineRenderer = lr });
-                        
-                        Debug.Log("AddedIt");
-
+                        _connectedObjects.Add(new Pair { elementOne = _lastElemeent.transform, elementTwo = element.transform, lineRenderer = LaneRendererBuild() });
+                        _lastElemeent = null;
                     }
                 }
                 else
@@ -49,6 +49,26 @@ namespace Bricks
                     _lastElemeent = null;
                 }
             }
+        }
+
+        private void Draw ()
+        {
+            foreach (var pair in _connectedObjects)
+            {
+                var temp = new Vector3(pair.elementOne.position.x, pair.elementOne.position.y, -1); // for some reason I nedd to plase lines closer to camera (z = -10) in order to draw lines over elements
+                pair.lineRenderer.SetPosition(0, temp);
+                temp = new Vector3(pair.elementTwo.position.x, pair.elementTwo.position.y, -1);
+                pair.lineRenderer.SetPosition(1, temp);
+
+            }
+        }
+
+        private LineRenderer LaneRendererBuild()
+        {
+            var lr = new GameObject().AddComponent<LineRenderer>();
+            lr.gameObject.transform.SetParent(_parent, false);
+            lr.startWidth = 0.05f;
+            return lr;
         }
 
         private void StateCheck ()
@@ -61,17 +81,12 @@ namespace Bricks
                 }
             }
             _connectedObjects.RemoveAll(pair => !pair.elementOne || !pair.elementTwo);
-            Debug.Log(_connectedObjects.Count);
-
-
-            
-
         }
 
         private struct Pair
         {
-            public BuildingElement elementOne;
-            public BuildingElement elementTwo;
+            public Transform elementOne;
+            public Transform elementTwo;
 
             public LineRenderer lineRenderer;
         }

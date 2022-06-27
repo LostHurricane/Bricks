@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Bricks
 {
+    /// <summary>
+    /// Main View of elements
+    /// </summary>
     public class BuildingElement : MonoBehaviour
     {
         [SerializeField]
@@ -22,13 +21,13 @@ namespace Bricks
 
         private void OnMouseDown()
         {
-            Debug.Log("Unfreeze");
+            //Debug.Log("Unfreeze");
             _rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
         private void OnMouseUp()
         {
-            Debug.Log("freeze");
+            //Debug.Log("freeze");
             _rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
