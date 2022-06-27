@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Bricks
 {
+    /// <summary>
+    /// Universal Input Class for this project
+    /// </summary>
     public class MouseClicker
     {
         private const float DOUBLE_CLICK_TIME = 0.3f;
@@ -21,8 +24,6 @@ namespace Bricks
                 float timeSinceLastClick = Time.time - _lastClickTime;
                 if (timeSinceLastClick <= DOUBLE_CLICK_TIME)
                 {
-                    Debug.Log(timeSinceLastClick);
-
                     DoubleClick = true;
                 }
                 else

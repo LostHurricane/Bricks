@@ -12,17 +12,20 @@ namespace Bricks
         private ElementController _elementController;
         private MouseClicker _mouseClicker;
 
+        private LinesController linesController;
+
         void Start()
         {
             _mouseClicker = new MouseClicker();
             _elementController = new ElementController(_prototype, _mouseClicker);
-        
+            linesController = new LinesController(_mouseClicker);
         }
 
         void Update()
         {
             _mouseClicker.Check();
             _elementController.Execute(Time.deltaTime);
+            linesController.Execute();
         }
     }
 }

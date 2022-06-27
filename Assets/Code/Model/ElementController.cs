@@ -24,7 +24,7 @@ namespace Bricks
 
         public void Execute (float detaTime)
         {
-            if (_mouseClicker.DoubleClick && IsPointOnElement(out var element))
+            if (_mouseClicker.DoubleClick && Extentions.IsPointOnElement(out var element))
             {
                 RemoveElement(element);
             }
